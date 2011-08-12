@@ -1,0 +1,6 @@
+.*.swp
+^CVS
+.*/CVS
+.*/CVS/.*
+tags
+.*\.git

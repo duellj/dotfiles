@@ -1,0 +1,48 @@
+[ui]
+username = Jon Duell <jon.duell@ombuweb.com>
+ignore = ~/.hgignore
+ssh = ssh -C
+
+[extensions]
+bookmarks =
+hgext.bookmarks =
+mercurial_keyring =
+hgext.mq =
+hgext.extdiff =
+hgsubversion = ~/.hgext/hgsubversion/hgsubversion
+rebase =
+graphlog =
+;hggit =
+color =
+progress =
+hgext.record =
+
+[extdiff]
+cmd.vimdiff = /usr/local/bin/mvim
+opts.vimdiff = -d -f '+next' '+execute "DirDiff" argv(0) argv(1)'
+
+[color]
+status.modified = magenta bold
+status.added = green bold
+status.removed = red bold
+status.deleted = cyan bold
+status.unknown = blue bold
+status.ignored = white bold
+qseries.applied = blue bold underline
+qseries.unapplied = white bold
+qseries.missing = red bold
+
+[web]
+cacerts = /etc/hg-dummy-cert.pem
+
+[merge-tools]
+threesome.executable = mvim
+threesome.args = -f $base $local $other $output -c 'ThreesomeInit'
+threesome.premerge = keep
+threesome.priority = 1
+
+[hooks]
+post-push = hg log -l1 --template '{node|short}' | pbcopy
+
+[alias]
+lc = !$HG log -l1 --template '{node|short}' | pbcopy

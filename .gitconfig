@@ -1,0 +1,27 @@
+[alias]
+	ci = commit
+	st = status
+	lc = log ORIG_HEAD.. --stat
+	export = !git cherry | sed -n 's/^+ //p' | xargs -L1 git cvsexportcommit -c -p -v -u -k
+	export-cvs = !git cherry cvs | sed -n 's/^+ //p' | xargs -L1 git cvsexportcommit -c -p -v -u -k
+	co = checkout
+  patch = diff --no-ext-diff
+  d = difftool
+[user]
+	name = Jon Duell
+	email = jon@jonduell.com
+[color]
+	ui = auto
+[core]
+	excludesfile = /Users/jonduell_pro/.gitignore
+[pager]
+  diff =
+[url "http://git.drupal.org/project/"]
+  insteadOf = "mod:"
+
+[merge]
+tool = threesome
+
+[mergetool "threesome"]
+cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'ThreesomeInit'"
+trustExitCode = true

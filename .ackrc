@@ -1,0 +1,2 @@
+--type-set=drupal=.php,.inc,.module,.install,.info,.engine,.profile --type=drupal
+--smart-case

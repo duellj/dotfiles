@@ -1,0 +1,10 @@
+"1.0b6 (created: 2011/03/09 09:25:18)
+
+loadplugins '\.(js|penta)$'
+group user
+map -modes=n <Leader>f <A-M-F12>
+set editor='/usr/local/bin/mvim -f +<line> <file>'
+set mapleader=,
+set passkeys=mail.google.com:'''jkr<CR>,giy''',google.com/reader:jkngaplmosSt
+
+" vim: set ft=pentadactyl:
