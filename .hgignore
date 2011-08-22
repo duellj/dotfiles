@@ -4,3 +4,4 @@
 .*/CVS/.*
 tags
 .*\.git
+logs
