@@ -2,6 +2,7 @@
 username = Jon Duell <jon.duell@ombuweb.com>
 ignore = ~/.hgignore
 ssh = ssh -C
+commitsubrepos = no
 
 [extensions]
 bookmarks =
@@ -9,7 +10,7 @@ hgext.bookmarks =
 mercurial_keyring =
 hgext.mq =
 hgext.extdiff =
-hgsubversion = ~/.hgext/hgsubversion/hgsubversion
+;hgsubversion =
 rebase =
 graphlog =
 ;hggit =
