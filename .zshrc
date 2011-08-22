@@ -20,7 +20,10 @@ plugins=(git osx vi-mode github autojump brew)
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
-export PATH=$PATH:/Library/PostgreSQL/8.4/bin:/usr/local/Cellar/python/2.7.1/bin
+export PATH=/usr/local/sbin:/usr/local/bin:$PATH
+export PATH=/usr/local/Cellar/php/5.3.6/bin:$PATH
+export PATH=/Library/PostgreSQL/8.4/bin:/usr/local/share/python:/usr/local/Cellar/python/2.7.2/bin:$PATH
+# export PATH=$PATH:/Library/PostgreSQL/8.4/bin:/usr/local/Cellar/python/2.7.2/bin
 export NODEPATH=/usr/local/lib/node
 
 # Always default to mvim
@@ -75,3 +78,13 @@ alias dctags='ctags --langmap=php:.install.inc.module.theme.php.profile --php-ki
 hgdiff() {
     hg cat $1 | vim - -c  ":vert diffsplit $1" -c "map q :qa!<CR>";
 }
+
+# nginx
+alias nginx_start='launchctl load -w ~/Library/LaunchAgents/org.nginx.nginx.plist'
+alias nginx_stop='launchctl unload -w ~/Library/LaunchAgents/org.nginx.nginx.plist'
+alias nginx_restart='nginx_stop; nginx_start;' 
+
+# php-fpm
+alias fpm_start='launchctl load -w ~/Library/LaunchAgents/org.php.php-fpm.plist'
+alias fpm_stop='launchctl unload -w ~/Library/LaunchAgents/org.php.php-fpm.plist'
+alias fpm_restart='fpm_stop; fpm_start'
