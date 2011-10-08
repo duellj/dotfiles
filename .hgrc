@@ -1,6 +1,6 @@
 [ui]
-username = Jon Duell <jon.duell@ombuweb.com>
-ignore = ~/.hgignore
+username=Jon Duell <jon@jonduell.com>
+ignore=/Users/jonduell/.hgignore_global
 ssh = ssh -C
 commitsubrepos = no
 
@@ -22,6 +22,8 @@ hgext.record =
 cmd.vimdiff = /usr/local/bin/mvim
 opts.vimdiff = -d -f '+next' '+execute "DirDiff" argv(0) argv(1)'
 
+cmd.sourcetreediff=opendiff
+opts.sourcetreediff=
 [color]
 status.modified = magenta bold
 status.added = green bold
@@ -42,8 +44,22 @@ threesome.args = -f $base $local $other $output -c 'ThreesomeInit'
 threesome.premerge = keep
 threesome.priority = 1
 
+sourcetreemerge.gui=False
+sourcetreebulkmerge.gui=False
+sourcetreemerge.binary=False
+sourcetreebulkmerge.executable=/Applications/SourceTree.app/Contents/Resources/hg-merge.sh
+sourcetreemerge.args=
+sourcetreemerge.checkconflicts=True
+sourcetreemerge.premerge=True
+sourcetreemerge.executable=
+sourcetreebulkmerge.premerge=False
+sourcetreebulkmerge.binary=True
 [hooks]
 post-push = hg log -l1 --template '{node|short}' | pbcopy
 
 [alias]
+pr = pull --rebase
+pu = pull -u
 lc = !$HG log -l1 --template '{node|short}' | pbcopy
+clobber = revert --no-backup
+static = !$HG archive -r $@ -t tgz ~/Downloads/ombu-$@.tar.gz

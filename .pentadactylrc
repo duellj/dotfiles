@@ -2,9 +2,14 @@
 
 loadplugins '\.(js|penta)$'
 group user
-map -modes=n <Leader>f <A-M-F12>
+
+map -modes=n <Leader>f :firebug toggle<CR>
+map -modes=n <Leader>s :stop<CR>
+
 set editor='/usr/local/bin/mvim -f +<line> <file>'
 set mapleader=,
-set passkeys=mail.google.com:'''jkr<CR>,giy''',google.com/reader:jkngaplmosSt
+set passkeys=mail.google.com:'''jkr<CR>,giy''',google.com/reader:jkngaplmosSt,trello.com:q
+
+command! pinboard :open javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('https://pinboard.in/add?showtags=yes&url='+encodeURIComponent(q)+'&description='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'Pinboard',%20'toolbar=no,width=700,height=600'));
 
 " vim: set ft=pentadactyl:

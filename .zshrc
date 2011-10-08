@@ -15,7 +15,7 @@ export ZSH_THEME="duellj"
 # export DISABLE_LS_COLORS="true"
 
 # Enable zsh plugins
-plugins=(git osx vi-mode github autojump brew)
+plugins=(git osx vi-mode github z brew)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -23,6 +23,7 @@ source $ZSH/oh-my-zsh.sh
 export PATH=/usr/local/sbin:/usr/local/bin:$PATH
 export PATH=/usr/local/Cellar/php/5.3.6/bin:$PATH
 export PATH=/Library/PostgreSQL/8.4/bin:/usr/local/share/python:/usr/local/Cellar/python/2.7.2/bin:$PATH
+export PATH=~/bin:$PATH
 # export PATH=$PATH:/Library/PostgreSQL/8.4/bin:/usr/local/Cellar/python/2.7.2/bin
 export NODEPATH=/usr/local/lib/node
 
@@ -41,6 +42,7 @@ set -o vi
 # Nice man page output default is 'more -s!'
 # export PAGER=vimpager
 # alias less=$PAGER
+export LESS="-iMSx4 -FXR"
 
 # now some handy stuff
 alias l='ls'
@@ -48,6 +50,8 @@ alias la='ls -a'
 alias ll='ls -lh'
 alias lll='ll|less'
 alias llc='echo Total number of files `ll | wc -l` in `pwd`'
+
+alias dca='drush cc all'
 
 # get confirmation on these commands
 alias cp='cp -i'
@@ -73,7 +77,7 @@ export PGDATA=/Library/PostgreSQL/8.4/data
 
 # Ctags
 # Build ctags for drupal projects
-alias dctags='ctags --langmap=php:.install.inc.module.theme.php.profile --php-kinds=cdfi --languages=php --recurse'
+alias dctags="ctags --langmap=php:.install.inc.module.theme.php.profile.test --php-kinds=cdfi --languages=php --recurse --regex-PHP='/(public |static |abstract |protected |private )+function ([^ (]*)/\2/f/'"
 
 hgdiff() {
     hg cat $1 | vim - -c  ":vert diffsplit $1" -c "map q :qa!<CR>";

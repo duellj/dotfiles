@@ -1,27 +1,42 @@
 [alias]
-	ci = commit
-	st = status
-	lc = log ORIG_HEAD.. --stat
-	export = !git cherry | sed -n 's/^+ //p' | xargs -L1 git cvsexportcommit -c -p -v -u -k
-	export-cvs = !git cherry cvs | sed -n 's/^+ //p' | xargs -L1 git cvsexportcommit -c -p -v -u -k
-	co = checkout
+  ci = commit
+  st = status
+  lc = log ORIG_HEAD.. --stat
+  co = checkout
   patch = diff --no-ext-diff
   d = difftool
+
+  gl  = log -10 --color=always --all --graph --topo-order --pretty='format: %Cgreen%h%Creset %s%Cred%d%Creset%n'
+  gll = log     --color=always --all --graph --topo-order --pretty='format: %Cgreen%h%Creset %s%Cred%d%Creset%n'
+
 [user]
-	name = Jon Duell
-	email = jon@jonduell.com
+  name = Jon Duell
+  email = jon@jonduell.com
+
 [color]
-	ui = auto
+  ui = auto
+
 [core]
-	excludesfile = /Users/jonduell_pro/.gitignore
+  excludesfile = /Users/jonduell/.gitignore
+  autocrlf = input
+  safecrlf = true
+
 [pager]
   diff =
+
 [url "http://git.drupal.org/project/"]
   insteadOf = "mod:"
 
 [merge]
-tool = threesome
+  tool = threesome
 
 [mergetool "threesome"]
-cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'ThreesomeInit'"
-trustExitCode = true
+  cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'ThreesomeInit'"
+  trustExitCode = true
+
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = " "
+	trustExitCode = true
