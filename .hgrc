@@ -1,6 +1,6 @@
 [ui]
 username=Jon Duell <jon@jonduell.com>
-ignore=/Users/jonduell/.hgignore_global
+ignore=/Users/jonduell/.hgignore
 ssh = ssh -C
 commitsubrepos = no
 

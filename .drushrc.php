@@ -145,7 +145,7 @@
 // --no-label option
 # $options['no-label'] = TRUE;
 
-$options['destination'] = 'sites/all/modules';
+$options['destination'] = 'sites/all/modules/contrib';
 
 /*
  * Customize this associative array with your own tables. This is the list of
@@ -195,7 +195,7 @@ $options['skip-tables'] = array(
 # $command_specific['pm-updatecode'] = array('notes' => TRUE);
 
 // Save backups to hidden directory.
-$command_specific['pm-update'] = array('backup-dir' => '/Users/jonduell_pro/.drush-backups');
+$command_specific['pm-update'] = array('backup-dir' => '/Users/jonduell/.drush-backups');
 
 // List of drush commands or aliases that should override built-in 
 // shell functions and commands; otherwise, built-ins override drush 
