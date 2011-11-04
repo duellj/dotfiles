@@ -17,8 +17,8 @@
   ui = auto
 
 [core]
-  excludesfile = /Users/jonduell/.gitignore
-  autocrlf = input
+	excludesfile = /Users/jonduell/.gitignore
+	autocrlf = input
   safecrlf = true
 
 [pager]
@@ -38,5 +38,5 @@
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
 [mergetool "sourcetree"]
-	cmd = " "
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
