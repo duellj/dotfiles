@@ -19,6 +19,7 @@ color =
 progress =
 hgext.record =
 histedit = ~/.hgext/histedit/hg_histedit.py
+transplant=
 
 [extdiff]
 cmd.vimdiff = /usr/local/bin/mvim

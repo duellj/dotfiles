@@ -77,8 +77,8 @@ module_rename() {
   if (( $# == 0 ))
   then echo usage: module_rename old_name new_name; fi
   autoload zmv;
-  zmv '*' "\$f:s/${1}/${2}";
-  perl -pi -e "s/${1}/${2}/" *;
+  zmv '*.*' "\$f:s/${1}/${2}";
+  perl -pi -e "s/${1}/${2}/" *.*;
 }
 
 # PostgreSQL
@@ -86,7 +86,7 @@ export PGDATA=/Library/PostgreSQL/8.4/data
 
 # Ctags
 # Build ctags for drupal projects
-alias dctags="ctags --langmap=php:.install.inc.module.theme.php.profile.test --php-kinds=cdfi --languages=php --recurse --regex-PHP='/(public |static |abstract |protected |private )+function ([^ (]*)/\2/f/'"
+alias dctags="ctags --langmap=php:.install.inc.module.theme.php.profile.test --php-kinds=cdfi --languages=php --recurse"
 
 hgdiff() {
     hg cat $1 | vim - -c  ":vert diffsplit $1" -c "map q :qa!<CR>";
@@ -99,5 +99,5 @@ alias nginx_restart='nginx_stop; nginx_start;'
 
 # php-fpm
 alias fpm_start='launchctl load -w ~/Library/LaunchAgents/org.php.php-fpm.plist'
-alias fpm_stop='launchctl unload -w ~/Library/LaunchAgents/org.php.php-fpm.plist'
+alias fpm_stop='killall php-fpm; launchctl unload -w ~/Library/LaunchAgents/org.php.php-fpm.plist'
 alias fpm_restart='fpm_stop; fpm_start'
