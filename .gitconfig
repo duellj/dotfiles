@@ -12,8 +12,8 @@
   lastcommit = log -1 --format=format:%h
 
 [user]
-  name = Jon Duell
-  email = jon@jonduell.com
+	name = Jon Duell
+	email = jon@jonduell.com
 
 [color]
   ui = auto

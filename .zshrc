@@ -9,13 +9,13 @@ export ZSH_THEME="duellj"
 # export CASE_SENSITIVE="true"
 
 # Comment this out to disable weekly auto-update checks
-# export DISABLE_AUTO_UPDATE="true"
+export DISABLE_AUTO_UPDATE="true"
 
 # Uncomment following line if you want to disable colors in ls
 # export DISABLE_LS_COLORS="true"
 
 # Enable zsh plugins
-plugins=(git osx vi-mode github z brew)
+plugins=(git osx vi-mode github z brew drush)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -51,6 +51,7 @@ alias ll='ls -lh'
 alias lll='ll|less'
 alias llc='echo Total number of files `ll | wc -l` in `pwd`'
 
+alias dr='drush'
 alias dca='drush cc all'
 
 # get confirmation on these commands
@@ -63,6 +64,9 @@ alias c='clear'
 
 # show man page m command or args command
 alias m='man $*'
+
+# suffix aliases
+alias -s gz="tar zxvf"
 
 # Reload all zsh functions (for easy development)
 reloadfun() {
