@@ -105,3 +105,9 @@ alias nginx_restart='nginx_stop; nginx_start;'
 alias fpm_start='launchctl load -w ~/Library/LaunchAgents/org.php.php-fpm.plist'
 alias fpm_stop='killall php-fpm; launchctl unload -w ~/Library/LaunchAgents/org.php.php-fpm.plist'
 alias fpm_restart='fpm_stop; fpm_start'
+
+# solr
+alias solr-start='cd /usr/local/Cellar/solr/3.5.0/libexec/example; java -jar start.jar'
+
+# grc!!
+source "`brew --prefix grc`/etc/grc.bashrc"
