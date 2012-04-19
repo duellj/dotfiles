@@ -54,6 +54,9 @@ alias llc='echo Total number of files `ll | wc -l` in `pwd`'
 alias dr='drush'
 alias dca='drush cc all'
 
+# Fix mistypes
+alias gi='git st'
+
 # get confirmation on these commands
 alias cp='cp -i'
 alias rm='rm -i'
