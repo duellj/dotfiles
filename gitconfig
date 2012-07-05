@@ -12,6 +12,9 @@
 
   lastcommit = log -1 --format=format:%h
 
+  fuckyousubmodules = !pushd . && cd `git rev-parse --show-toplevel` && git submodule update --recursive --init && popd
+  fu = !git fuckyousubmodules
+
 [branch]
   autosetuprebase = always
 
