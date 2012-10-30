@@ -86,8 +86,15 @@ $options['shell-aliases']['unsuck'] = 'pm-disable -y overlay,dashboard';
 $options['shell-aliases']['offline'] = 'variable-set -y --always-set maintenance_mode 1';
 $options['shell-aliases']['online'] = 'variable-delete -y --exact maintenance_mode';
 $options['shell-aliases']['dis-all'] = '!drush -y dis $(drush pml --status=enabled --type=module --no-core --pipe)';
+
+// Custom Aliases
 $options['shell-aliases']['no-preprocess'] = '!drush -y vset preprocess_js 0 && drush -y vset preprocess_css 0';
 $options['shell-aliases']['preprocess'] = '!drush -y vset preprocess_js 1 && drush -y vset preprocess_css 1';
+$options['shell-aliases']['solr-rebuild'] = '!drush solr-delete-index && drush solr-mark-all && drush solr-index';
+$options['shell-aliases']['spwd'] = 'upwd --password=pass system';
+$options['shell-aliases']['kill-admin'] = 'vset admin_theme seven';
+$options['shell-aliases']['dev'] = 'en -y devel context_ui views_ui bean_admin_ui';
+
 
 // You can create a local cache of all projects checked out using
 // --package-handler=git_drupalorg; this can be faster for repeated

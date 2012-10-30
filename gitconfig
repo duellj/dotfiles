@@ -12,8 +12,14 @@
 
   lastcommit = log -1 --format=format:%h
 
-  fuckyousubmodules = !pushd . && cd `git rev-parse --show-toplevel` && git submodule update --recursive --init && popd
+  root = rev-parse --show-toplevel
+
+  su = submodule update --recursive --init
+
+  fuckyousubmodules = !pushd . && cd `git rev-parse --show-toplevel` && git submodule update --recursive && popd
   fu = !git fuckyousubmodules
+
+  nm = merge --no-ff
 
 [branch]
   autosetuprebase = always
@@ -27,8 +33,6 @@
 
 [core]
 	excludesfile = /Users/jonduell/.gitignore
-	autocrlf = input
-  safecrlf = true
 
 [pager]
   diff =
@@ -37,10 +41,10 @@
   insteadOf = "mod:"
 
 [merge]
-  tool = threesome
+  tool = splice
 
-[mergetool "threesome"]
-  cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'ThreesomeInit'"
+[mergetool "splice"]
+  cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'SpliceInit'"
   trustExitCode = true
 
 [difftool "sourcetree"]

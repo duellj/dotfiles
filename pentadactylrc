@@ -1,22 +1,24 @@
 "1.0b6 (created: 2011/03/09 09:25:18)
 
+colorscheme molokai
+
 loadplugins '\.(js|penta)$'
-set editor='/Users/jonduell/bin/mvim -f +<line> <file>'
+set editor='/Users/jonduell/bin/mvim -f +<line> <file> +"set filetype=markdown"'
 set followhints=1
-set showtabline=multitab
 group user
 
-set mapleader=,
-noremap <Leader>f <f12>
-noremap <Leader>s :stop<CR>
+map , <Leader>
+nmap -builtin <Leader>f <f12>
+nmap -builtin <Leader>s :stop<CR>
 
-nnoremap j 3j
-nnoremap k 3k
+nmap -builtin j 3j
+nmap -builtin k 3k
 
-noremap d <nop>
+nmap -builtin d <nop>
 
 set passkeys=mail.google.com:'''jkr<CR>,giy''',google.com/reader:jkngaplmosSt,trello.com:q
 
 command! pinboard :open javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('https://pinboard.in/add?showtags=yes&url='+encodeURIComponent(q)+'&description='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'Pinboard',%20'toolbar=no,width=700,height=600'));
 
-" vim: set ft=pentadactyl:
+
+" vim: set ft=vim.pentadactyl:
