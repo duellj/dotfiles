@@ -2,7 +2,3 @@
 	path = vim
 	url = git@github.com:duellj/dotvim.git
   update = rebase
-[submodule "oh-my-zsh"]
-	path = oh-my-zsh
-	url = git@github.com:duellj/oh-my-zsh.git
-  update = rebase
