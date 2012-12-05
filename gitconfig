@@ -1,25 +1,32 @@
 [alias]
   ci = commit
   st = status
-  lc = log ORIG_HEAD.. --stat
   co = checkout
+
   patch = diff --no-ext-diff
   d = difftool
-  logc = log --left-right --graph --cherry-pick --oneline
 
+  lc = log ORIG_HEAD.. --stat
+  logc = log --left-right --graph --cherry-pick --oneline
   gl  = log -10 --color=always --all --graph --topo-order --pretty='format: %Cgreen%h%Creset %s%Cred%d%Creset%n'
   gll = log     --color=always --all --graph --topo-order --pretty='format: %Cgreen%h%Creset %s%Cred%d%Creset%n'
+  ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
 
   lastcommit = log -1 --format=format:%h
 
   root = rev-parse --show-toplevel
 
   su = submodule update --recursive --init
-
   fuckyousubmodules = !pushd . && cd `git rev-parse --show-toplevel` && git submodule update --recursive && popd
   fu = !git fuckyousubmodules
 
   nm = merge --no-ff
+
+  rollback = reset --hard HEAD^
+
+  ack = log --color=always --all --topo-order --pretty='format:%Cgreen%h%Creset %s%Cred%d%Creset %C(black bold)(by %an)%Creset' --full-history -S
+
+  ksshow = "!sh -c 'git ksdiff $1^..$1;' -"
 
 [branch]
   autosetuprebase = always
@@ -40,18 +47,30 @@
 [url "http://git.drupal.org/project/"]
   insteadOf = "mod:"
 
-[merge]
-  tool = splice
-
-[mergetool "splice"]
-  cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'SpliceInit'"
-  trustExitCode = true
-
+[diff]
+	tool = Kaleidoscope
+[difftool]
+	prompt = false
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
+[merge]
+	tool = Kaleidoscope
+[mergetool]
+	prompt = false
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+[mergetool "splice"]
+  cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'SpliceInit'"
+  trustExitCode = true
 [mergetool "sourcetree"]
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [init]
 	templatedir = ~/.git_template
+[push]
+	default = simple
+[credential]
+	helper = osxkeychain

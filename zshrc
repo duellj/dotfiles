@@ -8,7 +8,7 @@ export ZSH_THEME="duellj-powerline"
 export DISABLE_AUTO_UPDATE="true"
 
 # Enable zsh plugins
-plugins=(vi-mode brew tmuxinator)
+plugins=(vi-mode brew tmuxinator vundle fabric)
 
 source $ZSH/oh-my-zsh.sh
 

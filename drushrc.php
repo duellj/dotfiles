@@ -94,7 +94,7 @@ $options['shell-aliases']['solr-rebuild'] = '!drush solr-delete-index && drush s
 $options['shell-aliases']['spwd'] = 'upwd --password=pass system';
 $options['shell-aliases']['kill-admin'] = 'vset admin_theme seven';
 $options['shell-aliases']['dev'] = 'en -y devel context_ui views_ui bean_admin_ui';
-
+$options['shell-aliases']['sdump'] = 'sql-dump --gzip --structure-tables-key=common';
 
 // You can create a local cache of all projects checked out using
 // --package-handler=git_drupalorg; this can be faster for repeated
@@ -196,7 +196,7 @@ $options['default-major'] = 7;
  * location as 'pm-updatecode'.
  */
 # $options['result-file'] = TRUE;
-# $options['result-file'] = '/path/to/backup/dir/@DATABASE_@DATE.sql';
+$options['result-file'] = '~/Sites/dumps/@DATABASE_@DATE.sql';
 
 
 // Enable verbose mode.
@@ -277,7 +277,7 @@ $options['default-major'] = 7;
  * commands when the "--structure-tables-key=common" option is provided.
  * You may add specific tables to the existing array or add a new element.
  */
-# $options['structure-tables']['common'] = array('cache', 'cache_filter', 'cache_menu', 'cache_page', 'history', 'sessions', 'watchdog');
+$options['structure-tables']['common'] = array('cache', 'cache_filter', 'cache_menu', 'cache_page', 'history', 'sessions', 'watchdog');
 
 /**
  * List of tables to be omitted entirely from SQL dumps made by the 'sql-dump'
@@ -334,7 +334,7 @@ $command_specific['pm-update'] = array('notes' => TRUE);
 $command_specific['pm-updatecode'] = array('notes' => TRUE);
 
 // Set a predetermined username and password when using site-install.
-# $command_specific['site-install'] = array('account-name' => 'alice', 'account-pass' => 'secret');
+$command_specific['site-install'] = array('account-name' => 'system', 'account-pass' => 'pass');
 
 /**
  * List of Drush commands or aliases that should override built-in shell
