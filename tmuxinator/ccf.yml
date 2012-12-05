@@ -1,0 +1,9 @@
+# ~/.tmuxinator/ccf.yml
+# you can make as many tabs as you wish...
+
+project_name: CCF
+project_root: ~/Sites/ccf.dev/public
+tabs:
+  - editor: vim
+  - shell:
+  - mysql: drush sqlc

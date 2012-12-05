@@ -1,0 +1,7 @@
+# ~/.tmuxinator/solr.yml
+# you can make as many tabs as you wish...
+
+project_name: solr
+project_root: ~/
+tabs:
+  - solr: solr-start

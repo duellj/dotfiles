@@ -1,0 +1,12 @@
+# ~/.tmuxinator/project_name.yml
+# you can make as many tabs as you wish...
+
+project_name: amaa
+project_root: ~/Sites/amaa.dev/public
+tabs:
+  - editor: vim
+  - shell:
+      layout: even-vertical
+      panes:
+        - #empty, will just run plain bash
+        - drush sqlc

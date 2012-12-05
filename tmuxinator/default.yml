@@ -1,0 +1,12 @@
+# ~/.tmuxinator/project_name.yml
+# you can make as many tabs as you wish...
+
+project_name: [project]
+project_root: ~/Sites/[project].dev/public
+tabs:
+  - editor: vim
+  - shell:
+      layout: even-veritcal
+      panes:
+        - #empty, will just run plain bash
+        - drush sqlc

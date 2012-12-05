@@ -1,0 +1,12 @@
+# ~/.tmuxinator/stand.yml
+# you can make as many tabs as you wish...
+
+project_name: stand
+project_root: ~/Sites/stand.dev/public
+tabs:
+  - editor: vim
+  - shell:
+      layout: even-horizontal
+      panes:
+        - #empty, will just run plain bash
+        - drush sqlc

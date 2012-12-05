@@ -1,0 +1,8 @@
+# ~/.tmuxinator/pmount.yml
+# you can make as many tabs as you wish...
+
+project_name: pmount
+project_root: ~/Sites/paramount.dev/public
+tabs:
+  - editor: vim
+  - shell:

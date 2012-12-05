@@ -1,0 +1,9 @@
+# ~/.tmuxinator/va.yml
+# you can make as many tabs as you wish...
+
+project_name: va
+project_root: ~/Sites/va.dev/public
+tabs:
+  - editor: vim
+  - shell:
+  - mysql: drush sqlc

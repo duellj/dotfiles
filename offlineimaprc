@@ -1,0 +1,40 @@
+[general]
+ui = TTY.TTYUI
+accounts = JonDuell
+pythonfile=~/.mutt/offlineimap.py
+fsync = False
+
+[Account JonDuell]
+localrepository = JonDuell-Local
+remoterepository = JonDuell-Remote
+status_backend = sqlite
+
+[Repository JonDuell-Local]
+type = Maildir
+localfolders = ~/.mail/jon-jonduell.com
+nametrans = lambda folder: {'drafts':  '[Gmail]/Drafts (Gmail IMAP)',
+                            'sent':    '[Gmail]/Sent Mail',
+                            'flagged': '[Gmail]/Starred',
+                            'trash':   '[Gmail]/Trash',
+                            'archive': '[Gmail]/All Mail',
+                            }.get(folder, folder)
+
+[Repository JonDuell-Remote]
+maxconnections = 1
+type = Gmail
+remoteuser = duellj@gmail.com
+remotepasseval = get_keychain_pass(account="duellj@gmail.com", server="imap.gmail.com")
+realdelete = no
+nametrans = lambda folder: {'[Gmail]/Drafts (Gmail IMAP)':    'drafts',
+                            '[Gmail]/Sent Mail': 'sent',
+                            '[Gmail]/Starred':   'flagged',
+                            '[Gmail]/Trash':     'trash',
+                            '[Gmail]/All Mail':  'archive',
+                            }.get(folder, folder)
+folderfilter = lambda folder: folder not in ['[Gmail]/Trash',
+                                             'Drupal',
+                                             'OMBU',
+                                             '[Gmail]/Important',
+                                             '[Gmail]/Spam',
+                                             ]
+
