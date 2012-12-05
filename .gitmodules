@@ -2,3 +2,6 @@
 	path = vim
 	url = git@github.com:duellj/dotvim.git
   update = rebase
+[submodule "prezto"]
+	path = prezto
+	url = git@github.com:duellj/prezto.git
