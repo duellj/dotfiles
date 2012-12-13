@@ -27,6 +27,8 @@
   ack = log --color=always --all --topo-order --pretty='format:%Cgreen%h%Creset %s%Cred%d%Creset %C(black bold)(by %an)%Creset' --full-history -S
 
   ksshow = "!sh -c 'git ksdiff $1^..$1;' -"
+	incoming = "!git remote update -p; git log ..@{u}"
+	outgoing = log @{u}..
 
 [branch]
   autosetuprebase = always
