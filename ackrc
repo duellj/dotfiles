@@ -1,3 +1,0 @@
---type-set=drupal=.php,.inc,.module,.install,.info,.test,.profile,.engine --type=drupal
---type-set=less=.less
---smart-case
