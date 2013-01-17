@@ -4,3 +4,12 @@
 [submodule "links/vim"]
 	path = links/vim
 	url = git@github.com:duellj/dotvim.git
+[submodule "links/drush/drush-aliases"]
+	path = links/drush/drush-aliases
+	url = git@github.com:duellj/drush-aliases.git
+[submodule "links/drush/drush-toolbox"]
+	path = links/drush/drush-toolbox
+	url = https://github.com/zroger/drush-toolbox.git
+[submodule "links/drush/registry_rebuild"]
+	path = links/drush/registry_rebuild
+	url = git@github.com:duellj/drush-aliases.git
