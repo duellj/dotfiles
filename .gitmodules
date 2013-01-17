@@ -1,7 +1,6 @@
-[submodule "vim"]
-	path = vim
-	url = git@github.com:duellj/dotvim.git
-  update = rebase
-[submodule "prezto"]
-	path = prezto
+[submodule "links/zprezto"]
+	path = links/zprezto
 	url = git@github.com:duellj/prezto.git
+[submodule "links/vim"]
+	path = links/vim
+	url = git@github.com:duellj/dotvim.git
