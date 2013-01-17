@@ -115,7 +115,7 @@ install_sources () {
 }
 
 install_dotfiles
-install_sources
+#install_sources
 
 
 echo ''

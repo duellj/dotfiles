@@ -20,9 +20,11 @@ mkdir -p $HOME/.cache/vim/backup
 mkdir -p $HOME/.cache/vim/undo
 
 # Install plugins via Vundle
-mkdir $HOME/links/vim/bundles/
-git clone https://github.com/gmarik/vundle.git $HOME/links/vim/bundles/vundle
-vim +BundleInstall +qall
+if [ ! -d $HOME/.vim/bundles ]
+  mkdir $HOME/links/vim/bundles/
+  git clone https://github.com/gmarik/vundle.git $HOME/links/vim/bundles/vundle
+  vim +BundleInstall +qall
+fi
 
 # Install old version of powerline
 git --git-dir=$HOME/.vim/bundle/powerline checkout -b develop origin/develop
