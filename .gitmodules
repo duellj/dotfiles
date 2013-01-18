@@ -13,3 +13,6 @@
 [submodule "links/drush/registry_rebuild"]
 	path = links/drush/registry_rebuild
 	url = git@github.com:duellj/drush-aliases.git
+[submodule "links/drush/coder"]
+	path = links/drush/coder
+	url = http://git.drupal.org/project/coder.git
