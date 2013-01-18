@@ -9,6 +9,10 @@ brew install php53-xdebug php53-xhprof
 ln -sfv /usr/local/opt/php53/*.plist ~/Library/LaunchAgents
 launchctl load ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
 
+/usr/local/bin/pear install PHP_CodeSniffer
+ln -sv $DOTFILES_DIR/links/drush/coder/coder_sniffer/Drupal $(/usr/local/bin/pear config-get php_dir)/PHP/CodeSniffer/Standards/
+brew unlink php53 && php link php53
+
 info "installing nginx"
 brew install nginx --with-debug
 ln -sfv /usr/local/opt/nginx/*.plist ~/Library/LaunchAgents

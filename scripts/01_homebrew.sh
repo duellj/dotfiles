@@ -13,7 +13,7 @@ if [[ "$(type -P brew)" ]]; then
 fi
 
 ##
-# Recipes`
+# Recipes
 ##
-recipes="git hub mercurial tmux reattach-to-user-namespace tree the_silver_searcher python sqlite drush"
+recipes="git hub mercurial tmux reattach-to-user-namespace tree the_silver_searcher python sqlite drush fasd"
 brew install $recipes
