@@ -3,30 +3,31 @@
 # Install Website Development Stack (nginx php mysql)
 
 info "installing php"
+echo ""
+mkdir -p $HOME/Library/LaunchAgents
 brew tap josegonzalez/php
 brew install php53 --with-fpm --without-apache --with-mysql --with-pgsql
 brew install php53-xdebug php53-xhprof
-ln -sfv /usr/local/opt/php53/*.plist ~/Library/LaunchAgents
-launchctl load ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
+ln -sfv /usr/local/opt/php53/*.plist $HOME/Library/LaunchAgents
+launchctl load $HOME/Library/LaunchAgents/homebrew.mxcl.php53.plist
 
 /usr/local/bin/pear install PHP_CodeSniffer
 ln -sv $DOTFILES_DIR/links/drush/coder/coder_sniffer/Drupal $(/usr/local/bin/pear config-get php_dir)/PHP/CodeSniffer/Standards/
-brew unlink php53 && php link php53
+brew unlink php53 && brew link php53
 
 info "installing nginx"
 brew install nginx --with-debug
-ln -sfv /usr/local/opt/nginx/*.plist ~/Library/LaunchAgents
-launchctl load ~/Library/LaunchAgents/homebrew.mxcl.nginx.plist
+ln -sfv /usr/local/opt/nginx/*.plist $HOME/Library/LaunchAgents
+launchctl load $HOME/Library/LaunchAgents/homebrew.mxcl.nginx.plist
 
 brew install dnsmasq
-ln -sfv /usr/local/opt/dnsmasq/*.plist ~/Library/LaunchAgents
-launchctl load ~/Library/LaunchAgents/homebrew.mxcl.dnsmasq.plist
+sudo cp -fv /usr/local/opt/dnsmasq/*.plist /Library/LaunchDaemons
+sudo launchctl load /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 
 info "installing mysql"
 brew install mysql
-tmptmp=$TMPDIR
+ln -sfv /usr/local/opt/mysql/*.plist $HOME/Library/LaunchAgents
+launchctl load $HOME/Library/LaunchAgents/homebrew.mxcl.mysql.plist
 unset TMPDIR
-mysql_install_db --verbose --user=`whoami` --basedir="$(brew --prefix mysql)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
-mysqladmin -u root password meh
-ln -sfv /usr/local/opt/mysql/*.plist ~/Library/LaunchAgents
-launchctl load ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
+/usr/local/bin/mysql_install_db --verbose --user=`whoami` --basedir="$(brew --prefix mysql)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
+/usr/local/bin/mysqladmin -u root password meh

@@ -107,15 +107,21 @@ install_dotfiles () {
   done
 }
 
-install_sources () {
-  for source in $DOTFILES_ROOT/sources/*
+install_scripts () {
+  # Since we're using system git, unlink our newer .gitconfig
+  unlink $HOME/.gitconfig
+
+  for script in $DOTFILES_ROOT/scripts/*
   do
-    source $source
+    source $script
   done
+
+  # Relink gitconfig now that a new version is installed
+  ln -s $DOTFILES_ROOT/links/gitconfig $HOME/.gitconfig
 }
 
 install_dotfiles
-#install_sources
+install_scripts
 
 
 echo ''

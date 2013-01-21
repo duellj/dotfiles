@@ -4,11 +4,13 @@
 
 if [[ ! "$(type -P brew)" ]]; then
   info "installing Homebrew"
-  true | /usr/bin/ruby -e "$(/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
+  echo ""
+  true | ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
 fi
 
 if [[ "$(type -P brew)" ]]; then
   info "updating Homebrew"
+  echo ""
   brew update
 fi
 
