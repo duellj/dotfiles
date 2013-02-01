@@ -11,8 +11,11 @@ brew install php53-xdebug php53-xhprof
 ln -sfv /usr/local/opt/php53/*.plist $HOME/Library/LaunchAgents
 launchctl load $HOME/Library/LaunchAgents/homebrew.mxcl.php53.plist
 
-/usr/local/bin/pear install PHP_CodeSniffer
+/usr/local/bin/pear install PHP_CodeSniffer 
 ln -sv $DOTFILES_DIR/links/drush/coder/coder_sniffer/Drupal $(/usr/local/bin/pear config-get php_dir)/PHP/CodeSniffer/Standards/
+/usr/local/bin/pear channel-discover pear.phpmd.org
+/usr/local/bin/pear channel-discover pear.pdepend.org
+/usr/local/bin/pear install --alldeps phpmd/PHP_PMD
 brew unlink php53 && brew link php53
 
 info "installing nginx"
