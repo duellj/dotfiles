@@ -6,4 +6,3 @@ project_root: ~/Sites/va.dev/public
 tabs:
   - editor: vim
   - shell:
-  - mysql: drush sqlc

@@ -3,7 +3,7 @@
 colorscheme molokai
 
 loadplugins '\.(js|penta)$'
-set editor='/Users/jonduell/bin/mvim -f +<line> <file> +"set filetype=markdown"'
+set editor='/usr/local/bin/mvim -f +<line> <file> +"set filetype=markdown"'
 " set editor='vim -f +<line> <file> +"set filetype=markdown"'
 set followhints=1
 group user

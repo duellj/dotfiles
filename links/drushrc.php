@@ -94,7 +94,7 @@ $options['shell-aliases']['solr-rebuild'] = '!drush solr-delete-index && drush s
 $options['shell-aliases']['spwd'] = 'upwd --password=pass system';
 $options['shell-aliases']['kill-admin'] = 'vset admin_theme seven';
 $options['shell-aliases']['dev'] = 'en -y devel context_ui views_ui bean_admin_ui';
-$options['shell-aliases']['sdump'] = 'sql-dump --gzip --structure-tables-key=common';
+$options['shell-aliases']['sdump'] = 'sql-dump --structure-tables-key=common --result-file=~/Sites/dumps/@DATABASE_@DATE.sql';
 
 // You can create a local cache of all projects checked out using
 // --package-handler=git_drupalorg; this can be faster for repeated
@@ -196,7 +196,7 @@ $options['default-major'] = 7;
  * location as 'pm-updatecode'.
  */
 # $options['result-file'] = TRUE;
-$options['result-file'] = '~/Sites/dumps/@DATABASE_@DATE.sql';
+# $options['result-file'] = '~/Sites/dumps/@DATABASE_@DATE.sql';
 
 
 // Enable verbose mode.

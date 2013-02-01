@@ -20,7 +20,7 @@
   fuckyousubmodules = !pushd . && cd `git rev-parse --show-toplevel` && git submodule update --recursive && popd
   fu = !git fuckyousubmodules
 
-  nm = merge --no-ff
+  nm = merge --no-ff --log --no-edit
 
   rollback = reset --hard HEAD^
 
@@ -65,6 +65,7 @@
 	prompt = false
 [mergetool "Kaleidoscope"]
 	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	trustExitCode = true
 [mergetool "splice"]
   cmd = "mvim -f $BASE $LOCAL $REMOTE $MERGED -c 'SpliceInit'"
   trustExitCode = true
