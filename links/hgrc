@@ -18,7 +18,7 @@ convert =
 color =
 progress =
 hgext.record =
-histedit = ~/.hgext/histedit/hg_histedit.py
+;histedit = ~/.hgext/histedit/hg_histedit.py
 transplant=
 
 [extdiff]

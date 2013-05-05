@@ -52,6 +52,7 @@
 
 [diff]
 	tool = Kaleidoscope
+	algorithm = patience
 [difftool]
 	prompt = false
 [difftool "Kaleidoscope"]
@@ -75,6 +76,6 @@
 [init]
 	templatedir = ~/.git_template
 [push]
-	default = simple
+	default = current
 [credential]
 	helper = osxkeychain

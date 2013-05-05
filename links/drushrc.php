@@ -95,6 +95,7 @@ $options['shell-aliases']['spwd'] = 'upwd --password=pass system';
 $options['shell-aliases']['kill-admin'] = 'vset admin_theme seven';
 $options['shell-aliases']['dev'] = 'en -y devel context_ui views_ui bean_admin_ui';
 $options['shell-aliases']['sdump'] = 'sql-dump --structure-tables-key=common --result-file=~/Sites/dumps/@DATABASE_@DATE.sql';
+$options['shell-aliases']['cct'] = '!drush cc theme-registry && drush cc css-js && drush cc views && drush cc theme-list && drush cc registry';
 
 // You can create a local cache of all projects checked out using
 // --package-handler=git_drupalorg; this can be faster for repeated

@@ -6,7 +6,3 @@ project_root: ~/Sites/stand.dev/public
 tabs:
   - editor: vim
   - shell:
-      layout: even-horizontal
-      panes:
-        - #empty, will just run plain bash
-        - drush sqlc
