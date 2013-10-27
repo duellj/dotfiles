@@ -1,9 +1,9 @@
 # ~/.tmuxinator/project_name.yml
-# you can make as many tabs as you wish...
+# you can make as many windows as you wish...
 
 project_name: amaa
 project_root: ~/Sites/amaa.dev/public
-tabs:
+windows:
   - editor: vim
   - shell:
       layout: even-vertical

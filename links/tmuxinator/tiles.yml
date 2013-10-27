@@ -1,0 +1,13 @@
+# ~/.tmuxinator/tiles.yml
+# you can make as many windows as you wish...
+
+project_name: tiles
+project_root: ~/Sites/tiles.dev/public
+windows:
+  - editor: vim
+  - shell:
+  - database:
+      layout: even-vertical
+      panes:
+        - vim +"set ft=mysql" +"Twrite bottom"
+        - drush sqlc

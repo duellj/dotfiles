@@ -1,8 +1,8 @@
 # ~/.tmuxinator/stand.yml
-# you can make as many tabs as you wish...
+# you can make as many windows as you wish...
 
 project_name: stand
 project_root: ~/Sites/stand.dev/public
-tabs:
+windows:
   - editor: vim
   - shell:

@@ -1,8 +1,8 @@
 # ~/.tmuxinator/appup.yml
-# you can make as many tabs as you wish...
+# you can make as many windows as you wish...
 
 project_name: appup
 project_root: ~/Sites/appup.dev/public
-tabs:
+windows:
   - editor: vim
   - shell:

@@ -1,8 +1,8 @@
-# ~/.tmuxinator/ecg.yml
+# ~/.tmuxinator/uofo.yml
 # you can make as many windows as you wish...
 
-project_name: ecg
-project_root: ~/Sites/ecg.dev/public
+project_name: uofo
+project_root: ~/Sites/uofo.dev/public
 windows:
   - editor: vim
   - shell:

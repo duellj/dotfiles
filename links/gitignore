@@ -3,3 +3,4 @@ fabfile.pyc
 .svn
 .vimrc
 .DS_Store
+.idea

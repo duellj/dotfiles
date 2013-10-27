@@ -21,5 +21,6 @@ set passkeys=mail.google.com:'''jkr<CR>,giy''',google.com/reader:jkngaplmosSt,tr
 
 command! pinboard :open javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('https://pinboard.in/add?showtags=yes&url='+encodeURIComponent(q)+'&description='+encodeURIComponent(d)+'&title='+encodeURIComponent(p),'Pinboard',%20'toolbar=no,width=700,height=600'));
 
+set defsearch=duckduckgo
 
 " vim: set ft=vim.pentadactyl:

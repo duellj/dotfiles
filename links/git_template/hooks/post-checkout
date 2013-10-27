@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# Ensure Drupal sites/default folder is writable.
-echo `git rev-parse --show-toplevel`
-if [ -d `git rev-parse --show-toplevel`/public/sites/default ]
-then
-  chmod 775 `git rev-parse --show-toplevel`/public/sites/default
-fi

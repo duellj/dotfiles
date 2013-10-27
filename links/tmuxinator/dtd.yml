@@ -1,0 +1,10 @@
+# ~/.tmuxinator/dtd.yml
+# you can make as many windows as you wish...
+
+project_name: dtd
+project_root: ~/
+windows:
+  - editor: vim
+  - shell:
+      layout: even-veritcal
+      panes:

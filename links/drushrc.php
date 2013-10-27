@@ -297,6 +297,11 @@ $options['structure-tables']['common'] = array('cache', 'cache_filter', 'cache_m
 # $options['variables']['anonymous'] = 'Visitor';
 
 /**
+ * Enable notifications by default.
+ */
+$options['notify'] = 10;
+
+/**
  * Command-specific execution options:
  *
  * Most execution options can be shared between multiple Drush commands; these
@@ -332,6 +337,8 @@ $command_specific['dl'] = array('destination' => 'sites/all/modules/contrib');
 
 // Always show release notes when running pm-update or pm-updatecode.
 $command_specific['pm-update'] = array('notes' => TRUE);
+// Don't backup (we use git after all, don't we).
+$command_specific['pm-update'] = array('no-backup' => TRUE);
 $command_specific['pm-updatecode'] = array('notes' => TRUE);
 
 // Set a predetermined username and password when using site-install.

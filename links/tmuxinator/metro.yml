@@ -1,0 +1,8 @@
+# ~/.tmuxinator/metro.yml
+# you can make as many windows as you wish...
+
+project_name: metro
+project_root: ~/Sites/metro.dev/public
+windows:
+  - editor: vim
+  - shell:
