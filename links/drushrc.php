@@ -160,7 +160,7 @@ $options['default-major'] = 7;
  * in other configuration files.  On the command line, paths may be separated
  * by a colon (:) on Unix-based systems or a semi-colon (;) on Windows.
  */
-# $options['include'] = array('/path/to/commands','/path2/to/more/commands');
+$options['include'] = array('/usr/local/share/drush/commands');
 
 /**
  * Specify the modules to ignore when searching for command files (*.drush.inc)
@@ -227,7 +227,7 @@ $options['default-major'] = 7;
 
 // By default, unknown options are disallowed and result in an error.  Change
 // them to issue only a warning and let command proceed.
-# $options['strict'] = FALSE;
+$options['strict'] = FALSE;
 
 /**
  * Drush requires at least rsync version 2.6.4 for some functions to work
@@ -299,7 +299,7 @@ $options['structure-tables']['common'] = array('cache', 'cache_filter', 'cache_m
 /**
  * Enable notifications by default.
  */
-$options['notify'] = 10;
+// $options['notify'] = 10;
 
 /**
  * Command-specific execution options:
@@ -343,6 +343,12 @@ $command_specific['pm-updatecode'] = array('notes' => TRUE);
 
 // Set a predetermined username and password when using site-install.
 $command_specific['site-install'] = array('account-name' => 'system', 'account-pass' => 'pass');
+
+// Create modules in custom.
+$command_specific['mb'] = array(
+  'write' => TRUE,
+  'destination' => 'sites/all/modules/custom',
+);
 
 /**
  * List of Drush commands or aliases that should override built-in shell

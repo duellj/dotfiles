@@ -1,0 +1,10 @@
+; Normally drush commands don't need a .info file. But we will insert a blank
+; file here so the drupal.org packaging script can add the necessary information
+; below. This will allow this command to automatically check for updates.
+
+; Information added by Drupal.org packaging script on 2014-03-18
+version = "7.x-1.3"
+core = "7.x"
+project = "drush_sql_sync_pipe"
+datestamp = "1395170056"
+
