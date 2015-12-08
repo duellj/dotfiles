@@ -1,9 +1,0 @@
-# ~/.tmuxinator/ombudemo.yml
-# you can make as many windows as you wish...
-
-project_name: ombudemo
-project_root: ~/Sites/ombudemo.dev/public
-windows:
-  - editor: vim
-  - demo:
-  - installer: cd ~/.drush/drupal-installer

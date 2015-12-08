@@ -1,8 +1,0 @@
-# ~/.tmuxinator/psu.yml
-# you can make as many windows as you wish...
-
-project_name: psu
-project_root: ~/Sites/psu.dev/public
-windows:
-  - editor: vim
-  - shell:
