@@ -43,6 +43,7 @@
 [core]
 	excludesfile = /Users/jonduell/.gitignore
 	filemode = false
+	ignorecase = false
 
 [pager]
   diff =

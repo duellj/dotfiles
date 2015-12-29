@@ -4,3 +4,5 @@ fabfile.pyc
 .vimrc
 .DS_Store
 .idea
+stellar.yaml
+config.codekit
