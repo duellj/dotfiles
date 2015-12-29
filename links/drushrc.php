@@ -95,7 +95,9 @@ $options['shell-aliases']['spwd'] = 'upwd --password=pass system';
 $options['shell-aliases']['kill-admin'] = 'vset admin_theme seven';
 $options['shell-aliases']['dev'] = 'en -y devel context_ui views_ui bean_admin_ui';
 $options['shell-aliases']['sdump'] = 'sql-dump --structure-tables-key=common --result-file=~/Sites/dumps/@DATABASE_@DATE.sql';
+$options['shell-aliases']['cca'] = 'cc all';
 $options['shell-aliases']['cct'] = '!drush cc theme-registry && drush cc css-js && drush cc views && drush cc theme-list && drush cc registry';
+$options['shell-aliases']['wd'] = 'watchdog-show';
 
 // You can create a local cache of all projects checked out using
 // --package-handler=git_drupalorg; this can be faster for repeated
@@ -300,6 +302,7 @@ $options['structure-tables']['common'] = array('cache', 'cache_filter', 'cache_m
  * Enable notifications by default.
  */
 // $options['notify'] = 10;
+// $options['notify-cmd'] = '/usr/local/bin/terminal-notifier';
 
 /**
  * Command-specific execution options:
@@ -336,10 +339,10 @@ $command_specific['dl'] = array('destination' => 'sites/all/modules/contrib');
 # $command_specific['script']['script-path'] = 'sites/all/scripts:profiles/myprofile/scripts';
 
 // Always show release notes when running pm-update or pm-updatecode.
-$command_specific['pm-update'] = array('notes' => TRUE);
+// $command_specific['pm-update'] = array('notes' => TRUE);
 // Don't backup (we use git after all, don't we).
-$command_specific['pm-update'] = array('no-backup' => TRUE);
-$command_specific['pm-updatecode'] = array('notes' => TRUE);
+// $command_specific['pm-update'] = array('no-backup' => TRUE);
+// $command_specific['pm-updatecode'] = array('notes' => TRUE);
 
 // Set a predetermined username and password when using site-install.
 $command_specific['site-install'] = array('account-name' => 'system', 'account-pass' => 'pass');

@@ -2,6 +2,7 @@
 
 function _sql_sync_pipe_update_check() {
   $cid = 'update_check';
+
   // Set threshold to check for an update and report usage to drupal.org at
   // least once per daily usage.
   if (($cache = drush_cache_get($cid, 'sql_sync_pipe')) && isset($cache->created)) {
@@ -13,44 +14,42 @@ function _sql_sync_pipe_update_check() {
       return;
     }
   }
-  $command_dir = dirname(__FILE__);
-  $command_parent_dir = dirname($command_dir);
-  // Don't check unless we have a datestamp in drush.info
-  $project = parse_ini_file($command_dir . '/drush_sql_sync_pipe.info');
-  if (($project === FALSE) || (!array_key_exists('datestamp', $project))) {
-    drush_log(dt('Cannot determine the release date for the current installation of the drush_sql_sync_pipe command.'), 'notice');
+
+  $path = dirname(__FILE__);
+  $project = drush_drupal_parse_info_file($path . '/drush_sql_sync_pipe.info');
+  if ($project === FALSE) {
+    $project = array();
+  }
+  // The update_status engine needs the path and label for project in the array.
+  else if ($project) {
+    $project['path'] = $path;
+    $project['label'] = 'drush_sql_sync_pipe';
+  }
+
+  // Retrieve the update_status engine and determine if there is a new release.
+  /** @type \Drush\UpdateService\StatusInfoDrush $update_status */
+  $update_status = drush_get_engine('update_status');
+  $info = $update_status->getStatus(array(
+    'drush_sql_sync_pipe' => array_merge(pm_parse_request('drush_sql_sync_pipe'), $project),
+  ), TRUE);
+  $info = reset($info);
+
+  // Skip update check if no update status information could be determined.
+  if (!$info) {
+    drush_log(dt('Unable to determine the status of available update data.'), 'warning');
+    drush_cache_set($cid, time(), 'sql_sync_pipe');
     return;
   }
-  $is_dev = FALSE;
-  // Retrieve release information for drush_sql_sync_pipe.
-  $releases = _sql_sync_pipe_update_get_releases($project);
-  // Check for newer releases based on the datestamp.
-  // We add 60 seconds to the .info datestamp because of a drupal.org WTF.
-  // @see http://drupal.org/node/1019356
-  $datestamp = $project['datestamp'] + 60;
-  $update_version = FALSE;
-  foreach ($releases['releases'] as $version => $release) {
-    // We deliberately skip any dev releases unless the current release is a dev release.
-    if ((!array_key_exists('version_extra', $release) || ($release['version_extra'] != 'dev'))) {
-      if ($release['date'] > $datestamp) {
-        $update_version = $release['version'];
-        $datestamp = $release['date'];
-        $is_dev = isset($release['version_extra']) && $release['version_extra'] == 'dev';
-        if ($is_dev) {
-          $update_version .= " (" . date('Y-M-d', $datestamp) . ")";
-        }
-      }
-    }
-  }
-  if ($update_version) {
-    drush_print(dt("\nA newer version of !title is available: !version. The current version installed is !currentversion.\n", array(
-      '!title' => $releases['title'],
-      '!version' => $update_version . " (" . date('Y-M-d', $datestamp) . ")",
-      '!currentversion' => $project['version'] . " (" . date('Y-M-d', $project['datestamp']) . ")",
+
+  if (version_compare($info['existing_version'], $info['recommended'], '<')) {
+    drush_print(dt("\nNew version of !title is available: !version\nCurrent version installed is: !currentversion.\n", array(
+      '!title' => $info['title'],
+      '!version' => $info['recommended'] . " (" . date('Y-M-d', $info['releases'][$info['recommended']]['date']) . ")",
+      '!currentversion' => $info['existing_version'] . " (" . date('Y-M-d', $info['datestamp']) . ")",
     )));
-    if (drush_confirm(dt('Would you like to download the new version of !title?', array('!title' => $releases['title'])))) {
+    if (drush_confirm(dt('Would you like to download the new version of !title?', array('!title' => $info['title'])))) {
       // Download the latest version.
-      drush_invoke_process($destination, 'pm-download', array('drush_sql_sync_pipe'), array('destination' => $command_parent_dir), array('interactive' => TRUE));
+      drush_invoke_process('@self', 'pm-download', array('drush_sql_sync_pipe'), array('destination' => dirname($path)), array('interactive' => TRUE));
       // Clear Drush's cache.
       drush_cache_clear_drush();
       // Get the current command's arguments.
@@ -66,69 +65,9 @@ function _sql_sync_pipe_update_check() {
   }
   else {
     drush_log(dt("!title self-update check: version !version is up-to-date.", array(
-      '!title' => $releases['title'],
-      '!version' => $project['version']
+      '!title' => $info['title'],
+      '!version' => $info['existing_version']
     )), 'notice');
   }
-  drush_cache_set($cid, $update_version, 'sql_sync_pipe');
-}
-
-function _sql_sync_pipe_update_get_releases(array $project = array()) {
-  drush_include_engine('release_info', 'updatexml');
-  $_project = pm_parse_project_version(array('drush_sql_sync_pipe'));
-  $project = array_merge(reset($_project), $project);
-  $xml = _sql_sync_pipe_update_parse_xml($project);
-  if (!$xml) {
-    return array();
-  }
-  return updatexml_get_releases_from_xml($xml, 'drush_sql_sync_pipe');
-}
-
-function _sql_sync_pipe_update_parse_xml($project) {
-  $status_url = isset($project['status url']) ? $project['status url'] : RELEASE_INFO_DEFAULT_URL;
-  $url = $status_url . '/' . $project['name'] . '/' . $project['drupal_version'];
-  drush_log('Downloading release history from ' . $url);
-  // Append a unique hash as the "site_key" and this command's version so
-  // drupal.org can track usage.
-  $hash = _sql_sync_pipe_update_hash();
-  if (!empty($hash)) {
-    $url .= (strpos($url, '?') !== FALSE) ? '&' : '?';
-    $url .= 'site_key=';
-    $url .= rawurlencode($hash);
-    if (!empty($project['version'])) {
-      $url .= '&version=';
-      $url .= rawurlencode($project['version']);
-    }
-  }
-  // Some hosts have allow_url_fopen disabled.
-  if ($path = drush_download_file($url, drush_tempnam($project['name']), drush_get_option('cache-duration-releasexml', 24 * 3600))) {
-    $xml = simplexml_load_file($path);
-  }
-  if (!$xml) {
-    // We are not getting here since drupal.org always serves an XML response.
-    return drush_set_error('DRUSH_PM_DOWNLOAD_FAILED', dt('Could not download project status information from !url', array('!url' => $url)));
-  }
-  if ($error = $xml->xpath('/error')) {
-    // Don't set an error here since it stops processing during site-upgrade.
-    drush_log($error[0], 'warning'); // 'DRUSH_PM_COULD_NOT_LOAD_UPDATE_FILE',
-    return FALSE;
-  }
-  // Unpublished project?
-  $project_status = $xml->xpath('/project/project_status');
-  if ($project_status[0][0] == 'unpublished') {
-    return drush_set_error('DRUSH_PM_PROJECT_UNPUBLISHED', dt("Project !project is unpublished and has no releases available.", array('!project' => $project['name'])), 'warning');
-  }
-  return $xml;
-}
-
-function _sql_sync_pipe_update_hash() {
-  // Return hash from cache, if it exists.
-  $cid = 'unique_hash';
-  if (($cache = drush_cache_get($cid, 'sql_sync_pipe')) && !empty($cache->data)) {
-    return $cache->data;
-  }
-  // If no cached hash exists, generate a new one.
-  $hash = sha1(uniqid(mt_rand(), TRUE)) . sha1(uniqid(mt_rand(), TRUE));
-  drush_cache_set($cid, $hash, 'sql_sync_pipe');
-  return $hash;
+  drush_cache_set($cid, $info['recommended'], 'sql_sync_pipe');
 }

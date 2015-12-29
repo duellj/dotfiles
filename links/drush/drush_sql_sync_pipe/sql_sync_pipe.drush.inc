@@ -1,13 +1,11 @@
 <?php
 
-include_once dirname(__FILE__) . '/update.inc';
-
 /**
  * Implements hook_drush_command().
  */
 function sql_sync_pipe_drush_command() {
   $items['sql-sync-pipe'] = array(
-    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
+    'bootstrap' => DRUSH_BOOTSTRAP_NONE,
     'description' => 'Copy and import source database to target database. Transfers as a gzipped pipe via SSH.',
     'aliases' => array(
       'ssp',
@@ -53,7 +51,7 @@ function sql_sync_pipe_drush_command() {
     'description' => 'README.txt for the sql-sync-pipe command.',
     'hidden' => TRUE,
     'topic' => TRUE,
-    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
+    'bootstrap' => DRUSH_BOOTSTRAP_NONE,
     'callback' => 'drush_print_file',
     'callback arguments' => array(dirname(__FILE__) . '/README.txt'),
     'aliases' => array('docs-ssp', 'docs-pipe'),
@@ -61,18 +59,59 @@ function sql_sync_pipe_drush_command() {
   return $items;
 }
 
+/**
+ * @todo document this
+ */
 function drush_sql_sync_pipe_init($source = NULL, $destination = NULL) {
+  // Validate installed Drush version.
+  $supported_versions = array(7, 8);
+  if (!defined('DRUSH_MAJOR_VERSION') || !in_array(DRUSH_MAJOR_VERSION, $supported_versions)) {
+    $info = parse_ini_file(dirname(__FILE__) . '/drush_sql_sync_pipe.info');
+    return drush_set_error('DRUSH_VERSION_NOT_SUPPORTED', dt("\nDrush SQL Sync Pipe (!PIPE_VERSION) only supports the following major Drush version(s): !SUPPORTED_VERSIONS\nThe currently installed Drush version is: !DRUSH_VERSION\nFor more details, please visit: !url\n", array(
+      '!PIPE_VERSION' => $info && !empty($info['version']) ? $info['version'] : 'unknown',
+      '!SUPPORTED_VERSIONS' => implode(', ', $supported_versions),
+      '!DRUSH_VERSION' => DRUSH_VERSION,
+      '!url' => 'https://www.drupal.org/project/drush_sql_sync_pipe',
+    )));
+  }
+
+  // Normally these engines would be loaded via the command info, however they
+  // are loaded before this hook is invoked. If an engine doesn't exist because
+  // of a different Drush version, all the person gets is an error. By loading
+  // the engines after the above version check, we can give the user a more
+  // meaningful reason as to why this command won't work (i.e. wrong version).
+  $command = drush_get_command();
+  $command['engines'] = array(
+    'package_handler' => array(
+      'default' => 'wget',
+    ),
+    'release_info' => array(
+      'default' => 'updatexml'
+    ),
+    'update_status' => array(
+      'default' => 'drush'
+    ),
+  );
+  drush_load_command_engines($command);
+
   // Automatically check for updates.
+  include_once dirname(__FILE__) . '/update.inc';
   _sql_sync_pipe_update_check();
+
   // Ignore hook if command was updated or the simulate option was provided.
   if (drush_get_context('DRUSH_SQL_SYNC_PIPE_UPDATED', FALSE) || drush_get_context('DRUSH_SIMULATE', FALSE)) {
     return FALSE;
   }
+
   drush_command_include('sql-sync');
-  drush_include(DRUSH_BASE_PATH . '/commands/sql', 'sql.drush.inc');
-  return drush_sql_sync_init($source, $destination);
+  drush_include(DRUSH_BASE_PATH . '/commands/sql', 'sql.drush');
+  drush_sql_bootstrap_further();
+  drush_sql_sync_init($source, $destination);
 }
 
+/**
+ * @todo document this
+ */
 function drush_sql_sync_pipe_validate($source = NULL, $destination = NULL) {
   // Ignore hook if command was updated.
   if (drush_get_context('DRUSH_SQL_SYNC_PIPE_UPDATED', FALSE)) {
@@ -82,30 +121,36 @@ function drush_sql_sync_pipe_validate($source = NULL, $destination = NULL) {
   if (drush_get_context('DRUSH_SIMULATE', FALSE)) {
     return drush_set_error('DRUSH_SIMULATE_NOT_SUPPORTED', dt('Simulation for the sql-sync-pipe command is not yet supported.'));
   }
-  $source_alias = drush_sitealias_overlay_options(drush_sitealias_get_record($source), 'source-');
-  if (empty($source_alias)) {
-    return drush_set_error('DRUSH_ALIAS_NOT_FOUND', dt('Error: no alias record could be found for !source', array('!source' => $source)));
-  }
-  $source_database = drush_sitealias_get_db_spec($source_alias, FALSE, 'source-');
-  if (empty($source_database)) {
-    return drush_set_error('DRUSH_DATABASE_NOT_FOUND', dt('Error: no database record could be found for !source', array('!source' => $source)));
-  }
-  $destination_alias = drush_sitealias_overlay_options(drush_sitealias_get_record($destination), 'target-');
-  if (empty($destination_alias)) {
-    return drush_set_error('DRUSH_ALIAS_NOT_FOUND', dt('Error: no alias record could be found for !destination', array('!destination' => $destination)));
-  }
-  $destination_database = drush_sitealias_get_db_spec($destination_alias, FALSE, 'target-');
-  if (empty($destination_database)) {
-    return drush_set_error('DRUSH_DATABASE_NOT_FOUND', dt('Error: no database record could be found for !destination', array('!destination' => $destination)));
-  }
+  return drush_sqlsync_sql_sync_validate($source, $destination);
 }
 
+/**
+ * @todo document this
+ */
 function drush_sql_sync_pipe($source = NULL, $destination = NULL) {
   $source_alias = drush_sitealias_overlay_options(drush_sitealias_get_record($source), 'source-');
   $source_database = drush_sitealias_get_db_spec($source_alias, FALSE, 'source-');
 
   $destination_alias = drush_sitealias_overlay_options(drush_sitealias_get_record($destination), 'target-');
   $destination_database = drush_sitealias_get_db_spec($destination_alias, FALSE, 'target-');
+
+  // Get all options. Originally from drush_sqlsync_sql_sync().
+  // These options are passed along to subcommands like sql-create, sql-dump, sql-query, sql-sanitize, ...
+  $source_options = drush_get_merged_prefixed_options('source-');
+  $target_options = drush_get_merged_prefixed_options('target-');
+  $backend_options = array();
+  // @todo drush_redispatch_get_options() assumes you will execute same command. Not good.
+  $global_options = drush_redispatch_get_options() + array(
+     'strict' => 0,
+  );
+  // We do not want to include root or uri here.  If the user
+  // provided -r or -l, their key has already been remapped to
+  // 'root' or 'uri' by the time we get here.
+  unset($global_options['root']);
+  unset($global_options['uri']);
+  if (drush_get_context('DRUSH_SIMULATE')) {
+    $backend_options['backend-simulate'] = TRUE;
+  }
 
   $target_dump = FALSE;
   if (drush_get_option('dump', FALSE)) {
@@ -141,11 +186,6 @@ function drush_sql_sync_pipe($source = NULL, $destination = NULL) {
   $txt_source = ($source_database['db-host'] ? $source_database['db-host'] . '/' : '') . $source_database['database'];
   $txt_destination = ($destination_database['db-host'] ? $destination_database['db-host'] . '/' : '') . $destination_database['database'];
 
-  // Create the drop/create MySQL command.Re-create the local DB table.
-  drush_print(dt('You will destroy data in !target and replace with data from !source.', array(
-    '!source' => $txt_source,
-    '!target' => $txt_destination,
-  )));
   // If any sanitization operations are to be done, then get the
   // sanitization messages and print them as part of the confirmation.
   // If --sanitize was specified but there were no sanitize messages,
@@ -160,16 +200,13 @@ function drush_sql_sync_pipe($source = NULL, $destination = NULL) {
     drush_print();
     drush_print("WARNING: --sanitize was specified, but deferred (e.g. the source site is remote).  The sanitization operations will be determined after the database is copied to the local system and will be run without further confirmation.  Run with --confirm-sanitizations to force confirmation after the sync.");
   }
-  // TODO: actually make the backup if desired.
-  drush_print();
-  drush_print(dt("You might want to make a backup first, using the sql-dump command.\n"));
-  if (!drush_confirm(dt('Do you really want to continue?'))) {
-    return drush_user_abort();
-  }
-  
+
+  // Get the destination SQL class.
+  $sql = drush_sql_get_class($destination_database);
+
   // Drop tables on destination as long as the 'no-drop' option isn't specified.
   if (!drush_get_option('no-drop', FALSE)) {
-    drush_sql_empty_db($destination_database);
+    $sql->drop($sql->listTables());
   }
 
   $table_selection = drush_sql_get_table_selection();
@@ -179,13 +216,13 @@ function drush_sql_sync_pipe($source = NULL, $destination = NULL) {
     $cache_tables = _sql_sync_pipe_get_tables($source_alias, $source_database, '*cache*');
     $table_selection['structure'] = array_merge($cache_tables, $table_selection['structure']);
   }
-  
+
   // Build the dump command.
   $dump_cmd = _sql_sync_pipe_build_dump_command($table_selection, $source_database);
-  
+
   // Build the import command.
-  $import_command = _drush_sql_connect($destination_database);
-  switch (_drush_sql_get_scheme($destination_database)) {
+  $import_command = $sql->connect(FALSE);
+  switch ($sql->scheme()) {
     case 'mysql':
       $import_command .= ' --compress --silent';
       break;
@@ -278,45 +315,23 @@ function drush_sql_sync_pipe($source = NULL, $destination = NULL) {
     drush_shell_exec($cmd);
   }
 
-  // After the database is imported into the destination, we
-  // will check and see if we did not collect sanitization
-  // operations at the beginning of the function (i.e. because the source
-  // site was remote), and if the destination site is local,
-  // then we will call the sanitization hooks now.
-  // This presumes an important precondition, that the code
-  // files were sync'ed before the database was sync'ed.
-  if (drush_get_option('deferred-sanitization', FALSE) && (drush_has_boostrapped(DRUSH_BOOTSTRAP_DRUPAL_SITE) == FALSE)) {
-    $bootstrapped = drush_bootstrap_max_to_sitealias($destination_alias);
-    if ($bootstrapped) {
-      drush_command_invoke_all('drush_sql_sync_sanitize', $destination);
-      $messages = _drush_sql_get_post_sync_messages();
-      if ($messages) {
-        drush_print();
-        drush_print($messages);
-      }
-      if (!drush_confirm(dt('Do you really want to sanitize the current database?'))) {
-        return drush_user_abort();
-      }
-      drush_sql_bootstrap_further();
-      drush_include(DRUSH_BASE_PATH . '/commands/sql', 'sync.sql');
-      drush_command_invoke_all('drush_sql_sync_sanitize', 'default');
-      $options = drush_get_context('post-sync-ops');
-      $sanitize_query = '';
-      foreach ($options as $id => $data) {
-        $sanitize_query .= $data['query'] . " ";
-      }
-      if (!empty($sanitize_query)) {
-        if (!drush_get_context('DRUSH_SIMULATE')) {
-          drush_sql_query($sanitize_query);
-        }
-        else {
-          drush_print("Executing: $sanitize_query");
-        }
-      }
+  // Run Sanitize if needed.
+  // Originally from drush_sqlsync_sql_sync().
+  $options = $global_options + $target_options;
+  if (drush_get_option('sanitize')) {
+    // Ideally, we should be using LogLevel::OK here instead of 'ok' if the
+    // class can be loaded.
+    drush_log(dt('Starting to sanitize target database on Destination.'), 'ok');
+    $return = drush_invoke_process($destination, 'sql-sanitize', array(), $options, $backend_options);
+    if ($return['error_status']) {
+      return drush_set_error('DRUSH_SQL_SANITIZE_FAILED', dt('sql-sanitize failed.'));
     }
   }
 }
 
+/**
+ * @todo document this
+ */
 function _sql_sync_pipe_pv(array &$commands, $flags = '') {
   static $pv;
   // Initialize PipeViewer command, if installed.
@@ -349,6 +364,9 @@ function _sql_sync_pipe_pv(array &$commands, $flags = '') {
   }
 }
 
+/**
+ * @todo document this
+ */
 function _sql_sync_pipe_get_tables($alias, $database, $pattern = NULL) {
   $tables = array();
   $cmd = _sql_sync_pipe_query('show tables;', $database);
@@ -376,6 +394,9 @@ function _sql_sync_pipe_get_tables($alias, $database, $pattern = NULL) {
   return $tables;
 }
 
+/**
+ * @todo document this
+ */
 function drush_sql_sync_pipe_post_sql_sync_pipe($source = NULL, $destination = NULL) {
   $modules_to_enable = drush_get_option_list('enable');
   if (!empty($modules_to_enable)) {
@@ -413,7 +434,10 @@ function drush_sql_sync_pipe_post_sql_sync_pipe($source = NULL, $destination = N
   }
 }
 
-function _sql_sync_pipe_build_dump_command($table_selection, $db_spec = NULL) {
+/**
+ * @todo document this
+ */
+function _sql_sync_pipe_build_dump_command($table_selection, $db_spec) {
   $skip_tables = $table_selection['skip'];
   $structure_tables = $table_selection['structure'];
   $tables = $table_selection['tables'];
@@ -425,26 +449,24 @@ function _sql_sync_pipe_build_dump_command($table_selection, $db_spec = NULL) {
   // @todo add documention once a hook for drush_get_option_help() is available.
   // @see drush_get_option_help() in drush.inc
   $ordered_dump = drush_get_option('ordered-dump');
-
-  if (is_null($db_spec)) {
-    $db_spec = _drush_sql_get_db_spec();
-  }
   $database = $db_spec['database'];
+  $sql = drush_sql_get_class($db_spec);
 
-  switch (_drush_sql_get_scheme($db_spec)) {
+  switch ($sql->scheme()) {
     case 'mysqli':
     case 'mysql':
       $exec = 'mysqldump';
       // Don't use --opt as this locks the tables on the server and can impact
       // production use and even possibly slow down the dump.
-      $extra = ' -CceKqQ --add-drop-table --add-locks --create-options --no-autocommit --single-transaction' . str_replace('--database=', ' ', _drush_sql_get_credentials($db_spec));
+      $extra = str_replace('--database=', '' , $sql->creds(FALSE));
+      $extra .= ' -CceKqQ --add-drop-table --add-locks --create-options --no-autocommit --single-transaction';
       if (isset($data_only)) {
         $extra .= ' --no-create-info';
       }
       if (isset($ordered_dump)) {
         $extra .= ' --skip-extended-insert --order-by-primary';
       }
-      $exec .= $extra;
+      $exec .= ' ' . $extra;
 
       if (!empty($tables)) {
         $exec .= ' ' . implode(' ', $tables);
@@ -467,7 +489,7 @@ function _sql_sync_pipe_build_dump_command($table_selection, $db_spec = NULL) {
       $create_db = drush_get_option('create-db');
       $exec = 'pg_dump ';
       // Unlike psql, pg_dump does not take a '--dbname=' before the database name.
-      $extra = str_replace('--dbname=', ' ', _drush_sql_get_credentials($db_spec));
+      $extra = str_replace('--dbname=', ' ', $sql->creds(FALSE));
       if (isset($data_only)) {
         $extra .= ' --data-only';
       }
@@ -499,7 +521,7 @@ function _sql_sync_pipe_build_dump_command($table_selection, $db_spec = NULL) {
       // is stored in a single file on the filesystem which can be copied just
       // like any other file. But it still has a use in migration purposes and
       // building human-readable diffs and such, so let's do it anyway.
-      $exec = _drush_sql_connect($db_spec);
+      $exec = $sql->connect(FALSE);
       // SQLite's dump command doesn't support many of the features of its
       // Postgres or MySQL equivalents. We may be able to fake some in the
       // future, but for now, let's just support simple dumps.
@@ -510,7 +532,7 @@ function _sql_sync_pipe_build_dump_command($table_selection, $db_spec = NULL) {
       break;
     case 'oracle':
       $create_db = drush_get_option('create-db');
-      $exec = 'exp ' . _drush_sql_get_credentials($db_spec);
+      $exec = 'exp ' . $sql->creds(FALSE);
       if (!empty($tables)) {
         $exec .= ' tables="(' . implode(',', $tables) . ')"';
       }
@@ -523,68 +545,124 @@ function _sql_sync_pipe_build_dump_command($table_selection, $db_spec = NULL) {
   return trim($exec);
 }
 
-function _sql_sync_pipe_query($query, $db_spec = NULL) {
-  $suffix = '';
-  $scheme = _drush_sql_get_scheme($db_spec);
-  // Inject table prefixes as needed.
-  if (drush_has_boostrapped(DRUSH_BOOTSTRAP_DRUPAL_DATABASE)) {
-    // Enable prefix processing which can be dangerous so off by default. See http://drupal.org/node/1219850.
-    if (drush_get_option('db-prefix')) {
-      if (drush_drupal_major_version() >= 7) {
-        $query = Database::getConnection()->prefixTables($query);
-      }
-      else {
-        $query = db_prefix_tables($query);
-      }
-    }
-  }
-  // is this an oracle query
-  if ($scheme == 'oracle') {
-    $query = drush_sql_format_oracle($query);
-    $suffix = '.sql';
-  }
-  // Convert mysql 'show tables;' query into something pgsql understands
-  if (($scheme == 'pgsql') && ($query == 'show tables;')) {
-    $query = drush_sql_show_tables_pgsql();
-  }
+/**
+ * @todo document this
+ */
+function _sql_sync_pipe_query($query, $db_spec) {
+  $sql = drush_sql_get_class($db_spec);
+  $query = $sql->query_prefix($query);
+  $query = $sql->query_format($query);
   return drush_sql_sync_pipe_build_exec($db_spec, $query);
 }
 
+/**
+ * @todo document this
+ */
 function drush_sql_sync_pipe_build_exec($db_spec, $query) {
-  $scheme = _drush_sql_get_scheme($db_spec);
-  $exec = '';
-  switch ($scheme) {
+  $sql = drush_sql_get_class($db_spec);
+  $args = array();
+  switch ($sql->scheme()) {
     case 'mysql':
-      $exec = 'mysql';
-      $exec .= _drush_sql_get_credentials($db_spec);
-      $exec .= ' ' . drush_get_option('extra');
-      $exec .= " -e " . drush_escapeshellarg($query);
+      $args[] = 'mysql';
+      $args[] = $sql->creds(FALSE);
+      $args[] = drush_get_option('extra');
+      $args[] = '-e ' . drush_escapeshellarg($query);
 
       break;
     case 'pgsql':
-      $exec = 'psql -q ';
-      $exec .= _drush_sql_get_credentials($db_spec);
-      $exec .= ' ' . (drush_get_option('extra') ? drush_get_option('extra') : "--no-align --field-separator='\t' --pset footer=off");
-      $exec .= " -c " . drush_escapeshellarg($query);
+      $args[] = 'psql -q';
+      $args[] = $sql->creds(FALSE);
+      $args[] = drush_get_option('extra') ? drush_get_option('extra') : "--no-align --field-separator='\t' --pset footer=off";
+      $args[] = '-c ' . drush_escapeshellarg($query);
       break;
     case 'sqlite':
-      $exec = 'sqlite3';
-      $exec .= ' ' . drush_get_option('extra');
-      $exec .= _drush_sql_get_credentials($db_spec);
-      $exec .= " " . drush_escapeshellarg($query);
+      $args[] = 'sqlite3';
+      $args[] = drush_get_option('extra');
+      $args[] = $sql->creds(FALSE);
+      $args[] = drush_escapeshellarg($query);
       break;
     case 'sqlsrv':
-      $exec = 'sqlcmd';
-      $exec .= ' ' . drush_get_option('extra');
-      $exec .= _drush_sql_get_credentials($db_spec);
-      $exec .= ' -h -1 -Q ' . drush_escapeshellarg($query);
+      $args[] = 'sqlcmd';
+      $args[] = drush_get_option('extra');
+      $args[] = $sql->creds(FALSE);
+      $args[] = '-h -1 -Q ' . drush_escapeshellarg($query);
       break;
     case 'oracle':
-      $exec = "echo " . drush_escapeshellarg($query) . " | ";
-      $exec .= 'sqlplus';
-      $exec .= ' ' . drush_get_option('extra');
-      $exec .= _drush_sql_get_credentials($db_spec);
+      $args[] = 'echo ' . drush_escapeshellarg($query) . ' |';
+      $args[] = 'sqlplus';
+      $args[] = drush_get_option('extra');
+      $args[] = $sql->creds(FALSE);
       break;
   }
-  return $exec;
+  return implode(' ', $args);
+}
+
+if (!function_exists('drush_sql_dump_file')) {
+  /**
+   * Backport of Drush 6 drush_sql_dump_file().
+   *
+   * This was removed in Drush 7
+   * @see https://github.com/drush-ops/drush/issues/1495
+   */
+  function drush_sql_dump_file(&$site_record) {
+    $site_record['dump-is-temp'] = FALSE;
+    // If the user has set the --{prefix}-dump option, then
+    // use the exact name provided.
+    $dump_file = drush_sitealias_get_path_option($site_record, 'dump');
+    if (!isset($dump_file)) {
+      $databases = sitealias_get_databases_from_record($site_record);
+      if (isset($databases)) {
+        $db_spec = $databases['default']['default'];
+        // Make a base filename pattern to use to name the dump file
+        $filename_pattern = $db_spec['database'];
+        if (isset($db_spec['remote-host'])) {
+          $filename_pattern = $db_spec['remote-host'] . '_' . $filename_pattern;
+        }
+      }
+      // If the user has set the --dump-dir option, then
+      // store persistant sql dump files there.
+      $dump_dir = drush_sitealias_get_path_option($site_record, 'dump-dir');
+      $use_temp_file = drush_sitealias_get_path_option($site_record, 'temp') || !$dump_dir;
+      $remote = isset($site_record['remote-host']);
+      // If this is a remote site, try to find a writable tmpdir.
+      if (!isset($dump_dir) && $remote) {
+        // If the alias is remote, we'll add on the 'sql' suffix.
+        // As mentioned in drush_tempnam, providing a suffix removes
+        // the guarentee of tempnam to return a unique filename;
+        // however, when the file is going to be used on a remote
+        // system, there is no such guarentee anyway, so we might
+        // as well include it.
+        $suffix = '.sql';
+        $remote_site = $site_record;
+        unset($remote_site['root']);
+        unset($remote_site['uri']);
+        $result = drush_invoke_process($site_record, 'php-eval', array('return drush_find_tmp();'), array(), array('integrate' => FALSE, 'override-simulated' => TRUE));
+        // If the call to invoke process does not work for some reason
+        // (e.g. drush not installed on the target machine),
+        // then we will just presume that the tmp dir is '/tmp'.
+        if (!$result || !empty($result['error_status']) || empty($result['object'])) {
+          $dump_dir = '/tmp';
+        }
+        else {
+          $dump_dir = $result['object'];
+        }
+      }
+      if ($use_temp_file) {
+        $dump_file = drush_tempnam($filename_pattern, $dump_dir, $remote ? '.sql' : '');
+        // If $dump_dir does not exist, tempname will use the system
+        // directory instead.  That is the behavior we want on the local
+        // system, but on remote systems, force the result back to the
+        // specified directory.
+        if ($remote) {
+          $dump_file = $dump_dir . '/' . basename($dump_file);
+        }
+        $site_record['dump-is-temp'] = TRUE;
+      }
+      else {
+        $dump_file = $dump_dir . '/' . $filename_pattern . '.sql';
+      }
+    }
+
+    return $dump_file;
+  }
 }
