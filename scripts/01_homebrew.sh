@@ -17,5 +17,6 @@ fi
 ##
 # Recipes
 ##
-recipes="git hub mercurial tmux reattach-to-user-namespace tree the_silver_searcher python sqlite drush fasd ctags"
+recipes="git hub mercurial tmux reattach-to-user-namespace tree the_silver_searcher python sqlite drush fasd ctags services terminal-notifier ssh-copy-id curl ffind"
+brew tap homebrew/services
 brew install $recipes
