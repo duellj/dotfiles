@@ -5,18 +5,17 @@
 info "installing php"
 echo ""
 mkdir -p $HOME/Library/LaunchAgents
-brew tap josegonzalez/php
-brew install php53 --with-fpm --without-apache --with-mysql --with-pgsql
-brew install php53-xdebug php53-xhprof
-ln -sfv /usr/local/opt/php53/*.plist $HOME/Library/LaunchAgents
-launchctl load $HOME/Library/LaunchAgents/homebrew.mxcl.php53.plist
+brew install php55 --with-fpm --without-apache --with-mysql --with-pgsql
+brew install php55-xdebug php55-xhprof
+ln -sfv /usr/local/opt/php55/*.plist $HOME/Library/LaunchAgents
+launchctl load $HOME/Library/LaunchAgents/homebrew.mxcl.php55.plist
 
 /usr/local/bin/pear install PHP_CodeSniffer 
 ln -sv $DOTFILES_DIR/links/drush/coder/coder_sniffer/Drupal $(/usr/local/bin/pear config-get php_dir)/PHP/CodeSniffer/Standards/
 /usr/local/bin/pear channel-discover pear.phpmd.org
 /usr/local/bin/pear channel-discover pear.pdepend.org
 /usr/local/bin/pear install --alldeps phpmd/PHP_PMD
-brew unlink php53 && brew link php53
+brew unlink php55 && brew link php55
 
 info "installing Apache"
 sudo launchctl unload /System/Library/LaunchDaemons/org.apache.httpd.plist 2>/dev/null

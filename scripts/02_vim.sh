@@ -9,7 +9,7 @@ echo ""
 # Use MacVim as system wide vim.
 brew tap homebrew/dupes
 brew install macvim --override-system-vim
-link_files /usr/local/opt/macvim/MacVim.app /Applications
+brew linkapps macvim
 
 # Fix python versioning problem
 install_name_tool -change /System/Library/Frameworks/Python.framework/Versions/2.7/Python /usr/local/Cellar/python/2.7.3/Frameworks/Python.framework/Versions/Current/Python /Applications/MacVim.app/Contents/MacOS/Vim

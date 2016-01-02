@@ -16,3 +16,6 @@
 [submodule "links/drush/drush_zsh_completion"]
 	path = links/drush/drush_zsh_completion
 	url = git@github.com:duellj/drush_zsh_completion.git
+[submodule "links/drush/drupal-installer"]
+	path = links/drush/drupal-installer
+	url = https://github.com/ombucore/drupal-installer.git
