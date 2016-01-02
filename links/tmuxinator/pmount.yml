@@ -1,0 +1,8 @@
+# ~/.tmuxinator/pmount.yml
+# you can make as many windows as you wish...
+
+project_name: pmount
+project_root: ~/Sites/paramount/public
+windows:
+  - editor: vim
+  - shell:

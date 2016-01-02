@@ -1,0 +1,6 @@
+# ~/.tmuxinator/neea.yml
+project_name: neea
+project_root: ~/Sites/nwln
+windows:
+  - editor: vim
+  - shell:

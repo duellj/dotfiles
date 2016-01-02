@@ -1,0 +1,8 @@
+# ~/.tmuxinator/uofo.yml
+# you can make as many windows as you wish...
+
+project_name: uofo
+project_root: ~/Sites/uofo/public
+windows:
+  - editor: vim
+  - shell:

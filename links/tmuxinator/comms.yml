@@ -1,0 +1,8 @@
+# ~/.tmuxinator/comms.yml
+# you can make as many windows as you wish...
+
+project_name: Comms
+project_root: ~/Sites/comms/public
+windows:
+  - editor: vim
+  - shell:
