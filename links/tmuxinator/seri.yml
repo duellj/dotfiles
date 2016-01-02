@@ -1,0 +1,6 @@
+# ~/.tmuxinator/seri.yml
+project_name: seri
+project_root: ~/Sites/seri/public
+windows:
+  - editor: vim
+  - shell:

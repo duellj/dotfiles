@@ -1,0 +1,9 @@
+# ~/.tmuxinator/ccf.yml
+# you can make as many windows as you wish...
+
+project_name: CCF
+project_root: ~/Sites/ccf/public
+windows:
+  - editor: vim
+  - shell:
+  - mysql: drush sqlc

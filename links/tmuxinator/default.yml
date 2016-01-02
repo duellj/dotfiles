@@ -1,0 +1,6 @@
+# ~/.tmuxinator/project_name.yml
+project_name: [project]
+project_root: ~/Sites/[project]/public
+windows:
+  - editor: vim
+  - shell:

@@ -1,0 +1,6 @@
+# ~/.tmuxinator/.yml
+project_name: uw
+project_root: ~/Sites/uwgh/public
+windows:
+  - editor: vim
+  - shell:

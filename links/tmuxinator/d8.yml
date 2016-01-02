@@ -1,0 +1,8 @@
+# ~/.tmuxinator/d8.yml
+# you can make as many windows as you wish...
+
+project_name: d8
+project_root: ~/Sites/d8/public
+windows:
+  - editor: vim
+  - shell:

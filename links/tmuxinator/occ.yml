@@ -1,0 +1,6 @@
+# ~/.tmuxinator/occ.yml
+project_name: OCC
+project_root: ~/Sites/occ/public
+windows:
+  - editor: vim
+  - shell:

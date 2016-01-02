@@ -1,0 +1,8 @@
+# ~/.tmuxinator/ecg.yml
+# you can make as many windows as you wish...
+
+project_name: ecg
+project_root: ~/Sites/ecg/public
+windows:
+  - editor: vim
+  - shell:

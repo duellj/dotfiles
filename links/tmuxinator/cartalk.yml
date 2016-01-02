@@ -1,0 +1,8 @@
+# ~/.tmuxinator/cartalk.yml
+# you can make as many windows as you wish...
+
+project_name: cartalk
+project_root: ~/Sites/cartalk/public
+windows:
+  - editor: vim
+  - shell:
